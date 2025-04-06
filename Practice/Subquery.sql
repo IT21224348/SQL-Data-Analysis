@@ -85,3 +85,13 @@ GROUP BY
     c.CustomerID, c.FirstName, c.LastName, c.Country, c.Score;
 
 
+SELECT *
+FROM Sales.Customers c
+LEFT JOIN (
+		SELECT CustomerID,
+			   COUNT(*) total_orsders
+		FROM Sales.Orders
+		GROUP BY CustomerID) o
+ON c.CustomerID = o.CustomerID
+
+
