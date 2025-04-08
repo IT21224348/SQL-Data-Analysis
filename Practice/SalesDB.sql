@@ -165,4 +165,99 @@ FROM Sales.Employees e
 INNER JOIN Sales.Employees m
     ON e.ManagerID = m.EmployeeID;
 
---
+--List all orders with corresponding product names and prices.
+SELECT o.OrderID, p.Product, p.Price
+FROM Sales.Orders o
+LEFT JOIN Sales.Products p
+ON o.ProductID = p.ProductID
+
+--Display all employees and their manager’s name.
+SELECT e.FirstName,m.FirstName
+FROM Sales.Employees e
+LEFT JOIN Sales.Employees m
+ON e.ManagerID = m.EmployeeID
+
+--Get customer name, product name, and quantity for each order.
+SELECT c.FirstName, p.Product, SUM(o.Quantity)
+FROM Sales.Customers c
+INNER JOIN Sales.Orders o
+ON c.CustomerID = o.CustomerID
+INNER JOIN Sales.Products p
+ON o.ProductID = p.ProductID
+GROUP BY c.FirstName,p.Product
+
+--Join customers and orders where order amount > 60.
+SELECT c.CustomerID,c.FirstName,SUM(o.Sales)
+FROM Sales.Customers c
+INNER JOIN Sales.Orders o
+ON c.CustomerID = O.CustomerID
+GROUP BY c.CustomerID,c.FirstName
+HAVING SUM(o.Sales) > 60
+
+--Show employee name and the number of orders handled (if orders table links)
+SELECT e.EmployeeID,e.FirstName,COUNT(*) No_of_orders
+FROM Sales.Employees e
+INNER JOIN Sales.Orders o
+ON e.EmployeeID = o.SalesPersonID
+GROUP BY e.EmployeeID,e.FirstName 
+ORDER BY No_of_orders DESC
+
+--Show customers who haven’t placed any orders.
+SELECT *
+FROM Sales.Customers c
+LEFT JOIN Sales.Orders o
+ON c.CustomerID = o.CustomerID
+WHERE o.OrderID IS NULL
+
+--Show products that have never been ordered.
+SELECT p.Product, o.OrderID,o.CustomerID
+FROM Sales.Products p
+LEFT JOIN Sales.Orders o
+ON p.ProductID = o.ProductID
+WHERE O.OrderID IS NULL
+
+--Display the employee who handled each order
+SELECT e.EmployeeID, e.FirstName, o.OrderID, o.OrderDate
+FROM Sales.Employees e
+INNER JOIN Sales.Orders o
+ON e.EmployeeID = o.SalesPersonID
+
+--Join employees with departments and show department-wise average salary
+SELECT 
+    e.EmployeeID,
+    e.Department,
+    e.Salary,
+    AVG(e.Salary) OVER (PARTITION BY e.Department) AS avg_dept_salary
+FROM Sales.Employees e;
+
+--List all employees with their manager’s department.
+SELECT e.EmployeeID,e.FirstName,m.Department,m.ManagerID
+FROM Sales.Employees e
+INNER JOIN Sales.Employees m
+ON e.ManagerID = m.EmployeeID
+
+SELECT 
+    e.EmployeeID,
+    e.FirstName AS EmployeeName,
+    m.Department AS ManagerDepartment,
+    e.ManagerID
+FROM Sales.Employees e
+INNER JOIN Sales.Employees m
+    ON e.ManagerID = m.EmployeeID;
+
+--Show customer name, order ID, and order total.
+SELECT c.FirstName, 
+       o.OrderID,
+	   o.Sales
+FROM Sales.Customers c
+LEFT JOIN Sales.Orders o
+ON c.CustomerID = O.CustomerID
+
+/*SELECT c.FirstName, 
+       o.OrderID,
+	   SUM(Sales) OVER (PARTITION BY c.CustomerID)
+FROM Sales.Customers c
+LEFT JOIN Sales.Orders o
+ON c.CustomerID = O.CustomerID*/
+
+
