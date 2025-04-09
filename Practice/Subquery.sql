@@ -66,7 +66,7 @@ SELECT c.CustomerID,
 	   c.Score,
 	   SUM(o.Sales) OVER(PARTITION BY c.CustomerID) Total_sales
 FROM Sales.Customers c
-LEFT JOIN Sales.Orders o
+INNER JOIN Sales.Orders o
 ON c.CustomerID = o.CustomerID
     
 
@@ -94,4 +94,32 @@ LEFT JOIN (
 		GROUP BY CustomerID) o
 ON c.CustomerID = o.CustomerID
 
+--Find the products that have a price higher than the average price of all products
+SELECT *,
+(SELECT AVG(Price) FROM Sales.Products)
+FROM Sales.Products 
+WHERE Price > (SELECT AVG(Price) FROM Sales.Products)
 
+--Show the details of orders made by customers in Germany
+SELECT *
+FROM Sales.Orders
+WHERE CustomerID IN (SELECT CustomerID FROM Sales.Customers WHERE Country = 'Germany')
+
+--Show the details of orders that are not made by customers in Germany
+SELECT *
+FROM Sales.Orders
+WHERE CustomerID NOT IN (SELECT CustomerID FROM Sales.Customers WHERE Country = 'Germany')
+
+SELECT *
+FROM Sales.Orders
+WHERE CustomerID IN (SELECT CustomerID FROM Sales.Customers WHERE Country != 'Germany')
+
+--Find female employees whose salaries are greate than any male employee
+SELECT FirstName, Salary
+FROM Sales.Employees
+WHERE Gender = 'F' AND Salary > ANY(SELECT Salary FROM Sales.Employees WHERE Gender = 'M')
+
+----Find female employees whose salaries are greate than all male employee
+SELECT FirstName, Salary
+FROM Sales.Employees
+WHERE Gender = 'F' AND Salary > ALL(SELECT Salary FROM Sales.Employees WHERE Gender = 'M')
