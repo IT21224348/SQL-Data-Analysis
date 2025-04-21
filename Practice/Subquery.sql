@@ -1,4 +1,4 @@
-/* Find the products that have a price higher than the average price of all the products */
+ /* Find the products that have a price higher than the average price of all the products */
 
 SELECT *
 FROM (SELECT 
@@ -123,3 +123,9 @@ WHERE Gender = 'F' AND Salary > ANY(SELECT Salary FROM Sales.Employees WHERE Gen
 SELECT FirstName, Salary
 FROM Sales.Employees
 WHERE Gender = 'F' AND Salary > ALL(SELECT Salary FROM Sales.Employees WHERE Gender = 'M')
+
+
+--Show all customer details and find the total orders for each customer
+SELECT *,
+(SELECT COUNT(*) FROM Sales.Orders o WHERE o.CustomerID = C.CustomerID)
+FROM Sales.Customers c
